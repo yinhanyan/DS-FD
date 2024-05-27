@@ -1,0 +1,30 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "DSFD"
+version = "1.2.0.dev"
+dependencies = ["numpy", "scipy", "pandas", "pympler"]
+requires-python = ">=3.12"
+authors = [{ name = "Hanyan Yin", email = "yinhanyan@ruc.edu.cn" }]
+maintainers = [{ name = "Hanyan Yin", email = "yinhanyan@ruc.edu.cn" }]
+description = "Dump Snapshot Frequent Directions for matrix sketching over sliding windows. "
+readme = "README.md"
+license = { file = "LICENSE" }
+keywords = [
+    "frequent directions",
+    "matrix sketching",
+    "sliding windows",
+    "streaming algorithm",
+]
+
+[project.urls]
+# Homepage = "https://example.com"
+# Documentation = "https://readthedocs.org"
+Repository = "https://github.com/yinhanyan/DS-FD"
+# "Bug Tracker" = "https://github.com/me/spam/issues"
+# Changelog = "https://github.com/me/spam/blob/master/CHANGELOG.md"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/dsfd"]
