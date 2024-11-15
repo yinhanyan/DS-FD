@@ -1,4 +1,8 @@
-numpy
-scipy
-pandas
-pympler
+fbpca==1.0
+line_profiler==4.1.1
+matplotlib==3.8.0
+numpy==1.26.4
+pandas==2.2.2
+Pympler==0.9
+scipy==1.13.0
+tqdm==4.65.0

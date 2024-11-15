@@ -1,7 +1,7 @@
 import scipy.io
 from scipy import linalg
 import numpy as np
-from seq_based_swfd import TimeBasedSWFD
+from seq_based_swfd import FastTimeBasedSWFD, TimeBasedSWFD, OptTimeBasedSwfd
 from lmfd import LMFD
 from rowsample import SWR, SWOR
 from tqdm import tqdm
@@ -46,8 +46,9 @@ def run():
     # print(r, R)
     # print(epochs, d)
     # exit(0)
-    ls = [50, 100, 150, 200, 250]
-    ls = [32]
+    # ls = [50, 100, 150, 200, 250]
+    ls = [55, 65,75,85,95,105]
+    ls = [105]
     query_step = epochs // 600
     # query_step = 1
     # query_step = 24192
@@ -55,8 +56,8 @@ def run():
     method = args.m
     print(method)
     # if method == "ours_maxF" or method == "ours_maxminF":
-    if method == "ours":
-        max_F = time_based_sliding_window_agg(Rs, timestamps, N, max, 0)
+    # if method == "ours" or method == "r1a":
+    max_F = time_based_sliding_window_agg(Rs, timestamps, N, max, 0)
         # min_F = time_based_sliding_window_agg(Rs, timestamps, N, min, max_F)
         # print(np.log(max_F))
         # exit(0)
@@ -72,6 +73,10 @@ def run():
             query_layer = {}
 
             match method:
+                case "opt":
+                    swfd = OptTimeBasedSwfd(N, R, d, l, beta=8, upper_F_norm=max_F)
+                case "r1a":
+                    swfd = FastTimeBasedSWFD(N, R, d, l, beta=1, upper_F_norm=max_F)
                 case "ours":
                     swfd = TimeBasedSWFD(N, R, d, l, beta=8, upper_F_norm=max_F)
                 case "lmfd":

@@ -1,3 +1,8 @@
+This is the official repository of our VLDB 2024 paper: [Optimal Matrix Sketching over Sliding Windows](https://www.vldb.org/pvldb/vol17/p2149-yin.pdf)
+
+* **2024/08/29**: This paper was nominated for the Best Research Paper Award at VLDB 2024! Thanks to editors and reviewers for their recognition and support.
+* **2024/11/15**: We added a simple max-heap optimization trick, which can significantly improve the performance furthermore without any extra space overhead and precision loss. Refer to `dump_fd.py` for more details.
+
 # Install dependencies
 
 ```bash

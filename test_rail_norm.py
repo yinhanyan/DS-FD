@@ -1,7 +1,7 @@
 import scipy.io
 from scipy import linalg
 import numpy as np
-from seq_based_swfd import TimeBasedSWFD
+from seq_based_swfd import FastTimeBasedSWFD, TimeBasedSWFD, OptTimeBasedSwfd
 from lmfd import LMFD
 from rowsample import SWR, SWOR
 from tqdm import tqdm
@@ -22,12 +22,14 @@ args = parser.parse_args()
 def run():
     np.random.seed(0)
     # np.seterr(all="raise")
+    name = "rail_profile"
     name = "rail_norm"
     A = scipy.io.loadmat(
         "dataset/rail2586.mat")['Problem'][0][0][7].T.todense()
     timestamps = scipy.io.loadmat("dataset/rail_timestamp.mat")["t"][0]
     A = A.astype(np.float64)
     A = A[:200000, :500]
+    # A = A[:200000, :]
     timestamps = timestamps[:200000]
     # print(timestamps)
     # exit(0)
@@ -48,15 +50,17 @@ def run():
     R = np.max(Rs)
     # print(r,R)
     # exit(0)
-    ls = [50, 100, 150, 200, 250]
-    ls = [35]
+    # ls = [10, 20, 30, 40, 50]
+    ls = [25,50,100,150,200]
+    ls = [200]
     query_step = epochs // 500
+    # query_step = epochs
     # query_step = 24192
     results = {}
     method = args.m
     print(method)
-    if method == "ours":
-        max_F = time_based_sliding_window_agg(Rs, timestamps, N, max, 0)
+    # if method == "ours" or method == "r1a" or method == "opt":
+    max_F = time_based_sliding_window_agg(Rs, timestamps, N, max, 0)
 
     for l in ls:
         with open(f"logs/{name},{method},l={l},N={N}.txt", "w") as f:
@@ -68,8 +72,14 @@ def run():
             max_size = 0
 
             match method:
+                case "opt":
+                    swfd = OptTimeBasedSwfd(N, R, d, l, beta=8, upper_F_norm=max_F)
+                case "r1a":
+                    swfd = FastTimeBasedSWFD(
+                        N, R, d, l, beta=8, upper_F_norm=max_F)
                 case "ours":
-                    swfd = TimeBasedSWFD(N, R, d, l, beta=8, upper_F_norm=max_F)
+                    swfd = TimeBasedSWFD(
+                        N, R, d, l, beta=8, upper_F_norm=max_F)
                 case "lmfd":
                     swfd = LMFD(N, d, l)
                 case "swr":
@@ -89,7 +99,7 @@ def run():
                 elapsed_time = end_time - start_time
                 sum_update_time_ms += elapsed_time//(10**6)
 
-                if t % query_step == 0:
+                if (t + 1) % query_step == 0:
                     # print(max_size)
                     # if t > N and t % query_step == 0:
                     start_time = time.process_time_ns()
